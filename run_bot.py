@@ -8,6 +8,9 @@ from test_module import *
 import sys
 import random
 import pickle
+from flask import Flask, request, redirect, jsonify, make_response, current_app
+
+app = Flask(__name__)
 
 with open('chatbot-model.pckl', 'rb') as handle:
     pipeline = pickle.load(handle)
@@ -21,20 +24,20 @@ def preprocess(input):
     pd_data = pd.DataFrame(data = {"example":[input]})
     return feature_extraction(pd_data['example'])
 
-def bot_answer(feats):
+@app.route('/prediction', methods=['POST'])
+def bot_answer():
+    input = request.json['input']
     answer = {'label':None,'input':None,'score':None,'answer':None}
-
+    feats = preprocess(input)
+    answer['input'] = input
     results = pipeline.predict_proba(feats)[0]
     resultsDict = dict(zip(pipeline.classes_, results))
     resultsRank = map(lambda x: x[0], sorted(zip(pipeline.classes_, results), key=lambda x: x[1], reverse=True))
     answer['label'] = resultsRank[0]
     answer['score'] = resultsDict[resultsRank[0]]
     answer['answer']= random.choice(dialog[answer['label']])
-    return answer
+    print answer
+    return jsonify(answer)
 
 if __name__ == '__main__':
-    input = sys.argv[1]
-    feats = preprocess(input)
-    answer = bot_answer(feats)
-    answer['input'] = input
-    print answer
+    app.run()
