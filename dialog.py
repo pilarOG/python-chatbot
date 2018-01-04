@@ -12,6 +12,7 @@ import sys
 
 def open_data(path_csv):
     data = pd.read_csv(path_csv, header = 0, delimiter = ",", encoding = 'utf-8')
+    print data
     # check for correct headers
     if 'answer' not in data or 'class' not in data:
         raise Exception('Data headers are wrong')
@@ -25,7 +26,7 @@ def create_dialog(data):
         dialog[data['class'][n]] = data['answer'][n].split('/')
     with open('chatbot-dialog.pckl', 'wb') as handle:
         pickle.dump(dialog, handle, protocol=pickle.HIGHEST_PROTOCOL)
-    print dialog
+    #print dialog
 
 if __name__ == "__main__":
     data = open_data(sys.argv[1]) # TODO: add error here

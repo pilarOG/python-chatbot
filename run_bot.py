@@ -21,7 +21,7 @@ def preprocess(input):
     pd_data = pd.DataFrame(data = {"example":[input]})
     return feature_extraction(pd_data['example'])
 
-def answer(feats):
+def bot_answer(feats):
     answer = {'label':None,'input':None,'score':None,'answer':None}
 
     results = pipeline.predict_proba(feats)[0]
@@ -35,6 +35,6 @@ def answer(feats):
 if __name__ == '__main__':
     input = sys.argv[1]
     feats = preprocess(input)
-    answer = answer(feats)
+    answer = bot_answer(feats)
     answer['input'] = input
     print answer

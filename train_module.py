@@ -38,8 +38,8 @@ def feature_extraction(pd_df):
         parsed = parse(row, lemmata=True)
         for token in parsed.split():
             for item in token:
-                lemmas += item[-1]
-                tokens += item[0]
+                lemmas += item[-1]+' '
+                tokens += item[0]+' '
         all_lemmas.append(lemmas)
         all_tokens.append(tokens)
     # create data frame with features
@@ -90,6 +90,7 @@ class LemmasTfIdf(BaseEstimator, TransformerMixin):
 
 # TRAINING
 def train_model(training_data):
+    print training_data
     # Encoding of the features and feature union
     features = []
     features.append(('token_tfidf', TokensTfIdf()))
